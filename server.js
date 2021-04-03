@@ -11,7 +11,7 @@ app.use(cors());
 
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.post("/write", (req, res) => {
+app.post("/create", (req, res) => {
     const taskName = req.body.taskName;
 
     const task = new TaskModel({
