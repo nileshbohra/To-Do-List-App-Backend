@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const port = process.env.PORT || 3001;
 const cors = require('cors');
 const TaskModel = require('./models/TaskModel');
+const TaskModelCompleted = require('./models/TaskModelCompleted');
+
 const app = express();
 
 require('dotenv').config();
@@ -22,7 +24,21 @@ app.post("/create", (req, res) => {
         if (err) {
             res.send(err);
         }
-        console.log("saved to DB");
+        res.send(result);
+    })
+});
+
+app.post('/createCompleted', (req, res) => {
+    const taskName = req.body.taskNameCompleted.taskName;
+
+    const task = new TaskModelCompleted({
+        taskName: taskName
+    })
+
+    task.save((err, result) => {
+        if (err) {
+            res.send(err);
+        }
         res.send(result);
     })
 });
@@ -36,14 +52,44 @@ app.get("/read", (req, res) => {
         }
     })
 });
+app.get("/readCompleted", (req, res) => {
+    TaskModelCompleted.find({}, (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    })
+});
 
 app.delete('/delete/:id', (req, res) => {
     const id = req.params.id;
     TaskModel.findByIdAndDelete(id, (err, result) => {
         if (err) {
             res.send(err)
+        }
+        res.send(result);
+    })
+})
+app.delete('/deleteCompleted/:id', (req, res) => {
+    const id = req.params.id;
+    TaskModelCompleted.findByIdAndDelete(id, (err, result) => {
+        if (err) {
+            res.send(err)
+        }
+        res.send(result);
+    })
+})
+
+app.put('/update/:id', (req, res) => {
+    const id = req.params.id;
+    const taskName = req.body.taskName;
+    TaskModel.findByIdAndUpdate(id, { taskName: taskName }, (err, data) => {
+        if (err) {
+            res.send(err);
         } else {
-            res.send(result);
+            console.log(data);
+            res.send(data);
         }
     })
 })
